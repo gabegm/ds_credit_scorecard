@@ -1,9 +1,10 @@
 import os
-import sqlite3
+import sqlalchemy as sa
 
 import numpy as np
 import pandas as pd
 
+env_path = os.getenv(key="CONDA_PREFIX")
 path = os.path.dirname(os.path.abspath(__file__))
 
 def get_data():
@@ -147,8 +148,9 @@ def get_data():
             settlement_term
         FROM loan;
     """
-    print(path + "/raw/database.sqlite")
-    conn = sqlite3.connect(path + "/raw/database.sqlite")
+
+    engine = sa.create_engine(f"sqlite:///{env_path}/data/raw/database.sqlite")
+    conn = engine.connect()
 
     df = (pd.read_sql_query(sql=sql,
                             con=conn,
@@ -174,7 +176,7 @@ def get_data():
                     limit=None, 
                     downcast=None)
             .astype({"loan_amnt": np.uint32,
-                    "funded_amount": np.uint32,
+                    "funded_amnt": np.uint32,
                     "funded_amnt_inv": np.uint32,
                     "int_rate": np.float32,
                     "installment": np.float32,
@@ -185,5 +187,7 @@ def get_data():
 
     df["term_months"] = df["term_months"].str.strip(to_strip=" months").astype(np.uint16)
     df["emp_length_years"] = df["emp_length_years"].str.strip(to_strip="+ years").astype(np.uint8)
+
+    conn.close()
 
     return df
