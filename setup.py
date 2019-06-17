@@ -1,4 +1,4 @@
-from setuptools import find_packages, setup
+from setuptools import setup, find_packages
 
 setup(
     name='ds_credit_scorecard',
@@ -6,5 +6,8 @@ setup(
     version='0.1.0',
     description='mathematical model attempting to provide a quantitative estimate of the probability that a customer will default on a loan.',
     author='gabegm',
+    url="https://github.com/gabegm/ds_credit_scorecard.git",
+    author_email="gabriel@gaucimaistre.com",
     license='MIT',
+    include_package_data=True,
 )
